@@ -7,9 +7,9 @@ insert into MenuItems(MenuID, Dish, CourseType, Price) values (1, "eggs", "all",
 insert into Employees(EmployeeID, Name, Role, Salary, Address, PhoneNumber, Email) values (1, "jacob", "manager", 1000.0, "42 Wallabee Way", "(111) 222-3333", "me@email.com");
 insert into Customers(CustomerID, Name, PhoneNumber, Email) values (1, "me", "(111) 222-3333", "me@email.com"), (2, "you", "(444) 555-6666", "you@email.com"), (3, "striga", "(444) 555-6666", "me2@email.com");
 insert into Bookings(BookingID, BookingDate, TableNumber, CustomerID, EmployeeID) values (1, "2022-10-10", 5, 1, 1), (2, "2022-11-12", 3, 3, 1), (3, "2022-10-11", 2, 2, 1), (4, "2022-10-13", 2, 1, 1);
-insert into DeliveryStatus(DeliveryID, Status, DeliveryDate) values (2, "pending", "2024-08-10");
+insert into DeliveryStatus(DeliveryID, Status, DeliveryDate) values (1, "pending", "2024-08-10"), (2, "pending", "2024-08-10"), (3, "pending", "2024-08-10");
 insert into Orders(BookingID, TotalCost, DeliveryStatusID) values (1, 10.0, 1),  (2, 20.0, 2), (3, 30.0, 3);
-insert into OrderItems(OrderID, MenuItemID) values (4, 2);
+insert into OrderItems(OrderID, MenuItemID) values (1, 2);
 
 select * from Menus;
 select * from MenuItems;
@@ -59,7 +59,7 @@ call CancelOrder(10);
 -- check available bookings task 1 inserted bookings earlier
 
 -- check available bookings task 2 check booking procedure
-drop procedure CheckBooking;
+drop procedure if exists CheckBooking;
 delimiter //
 create procedure CheckBooking(in dateToCheck date, in tableToCheck int) begin
 declare tableNumberBooked int;
@@ -73,7 +73,7 @@ end//
 delimiter ;
 call CheckBooking("2022-11-12", 3);
 
-drop procedure AddValidBooking;
+drop procedure if exists AddValidBooking;
 delimiter //
 create procedure AddValidBooking(in dateToAdd date, in tableToAdd int) begin
 declare tableNumberBooked int;
@@ -94,7 +94,7 @@ call AddValidBooking("2024-02-05", 1);
 
 
 -- Add/Update bookings task 1 AddBooking
-drop procedure AddBooking;
+drop procedure if exists AddBooking;
 delimiter //
 create procedure AddBooking(in bookingID_ToAdd int, in customerID_ToAdd int, in dateToAdd date, in tableToAdd int) 
 begin
@@ -106,7 +106,7 @@ call AddBooking(41, 2, "2024-05-05", 2);
 select * from Bookings;
 
 -- Add/Update bookings task 2 UpdateBooking
-drop procedure UpdateBooking;
+drop procedure if exists UpdateBooking;
 delimiter //
 create procedure UpdateBooking(in bookingID_ToUpdate int, in bookingDateToSet date)
 begin
@@ -117,7 +117,7 @@ delimiter ;
 call UpdateBooking(41, "2023-05-05");
 
 -- Add/Update bookings task 3 DeleteBooking
-drop procedure DeleteBooking;
+drop procedure if exists DeleteBooking;
 delimiter //
 create procedure DeleteBooking(in bookingID_ToDelete int)
 begin
