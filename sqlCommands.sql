@@ -10,6 +10,11 @@ insert into Bookings(BookingID, BookingDate, TableNumber, CustomerID, EmployeeID
 insert into DeliveryStatus(DeliveryID, Status, DeliveryDate) values (1, "pending", "2024-08-10"), (2, "pending", "2024-08-10"), (3, "pending", "2024-08-10");
 insert into Orders(BookingID, TotalCost, DeliveryStatusID) values (1, 10.0, 1),  (2, 20.0, 2), (3, 30.0, 3);
 insert into OrderItems(OrderID, MenuItemID) values (1, 2);
+insert into OrderItems(OrderID, MenuItemID) values (1, 2);
+insert into OrderItems(OrderID, MenuItemID) values (1, 2);
+insert into OrderItems(OrderID, MenuItemID) values (1, 2);
+insert into OrderItems(OrderID, MenuItemID) values (1, 2);
+insert into OrderItems(OrderID, MenuItemID) values (2, 2);
 
 select * from Menus;
 select * from MenuItems;
@@ -55,6 +60,16 @@ delimiter ;
 
 call CancelOrder(10);
 
+delimiter //
+create procedure CancelBooking(in bookingID_ToDelete int) begin
+delete from Bookings where BookingID = bookingID_ToDelete;
+select concat("Booking ", bookingID_ToDelete, " is cancelled");
+end//
+
+delimiter ;
+
+call CancelBooking(10);
+
 
 -- check available bookings task 1 inserted bookings earlier
 
@@ -91,6 +106,25 @@ end//
 
 delimiter ;
 call AddValidBooking("2024-02-05", 1);
+
+-- duplicate functionality of AddValidBooking because the grading page thinks it should be called ManageBooking
+drop procedure if exists ManageBooking;
+delimiter //
+create procedure ManageBooking(in dateToAdd date, in tableToAdd int) begin
+declare tableNumberBooked int;
+start transaction;
+select TableNumber into tableNumberBooked from Bookings where BookingDate = dateToAdd and TableNumber = tableToAdd limit 1;
+if tableNumberBooked is not null then
+	rollback;
+    select concat("Table ", tableToAdd, " was already booked, cannot create reservation") as ReservationResult;
+else
+	insert into Bookings(BookingDate, TableNumber) values (dateToAdd, tableToAdd);
+	commit;
+    select concat("Created reservation for table ", tableToAdd) as ReservationResult;
+end if;
+end//
+
+delimiter ;
 
 
 -- Add/Update bookings task 1 AddBooking
